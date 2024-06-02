@@ -10,6 +10,10 @@ class StopwatchApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.black,
+        appBarTheme: AppBarTheme(color: Colors.black),
+      ),
       home: StopwatchHomePage(),
     );
   }
@@ -69,13 +73,25 @@ class _StopwatchHomePageState extends State<StopwatchHomePage> {
   }
 
   @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Stopwatch Timer'),
+        title: Text(
+          'Stopwatch Timer',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -84,20 +100,45 @@ class _StopwatchHomePageState extends State<StopwatchHomePage> {
               style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 70),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ElevatedButton(
-                  onPressed: _isRunning ? _stopStopwatch : _startStopwatch,
-                  child: Text(_isRunning ? 'Stop' : 'Start'),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    _resetStopwatch();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(27),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: Color(0xff333333)),
+                    child: Center(
+                        child: Text(
+                      "Reset",
+                      style: TextStyle(color: Colors.white),
+                    )),
+                  ),
                 ),
-                SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: _resetStopwatch,
-                  child: Text('Reset'),
+                GestureDetector(
+                  onTap: () {
+                    _isRunning ? _stopStopwatch() : _startStopwatch();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(27),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color:
+                            _isRunning ? Color(0xff340e0b) : Color(0xff092911)),
+                    child: Center(
+                        child: Text(
+                      _isRunning ? 'Stop' : 'Start',
+                      style: TextStyle(
+                          color: _isRunning ? Colors.red : Colors.green),
+                    )),
+                  ),
                 ),
               ],
             ),
@@ -105,11 +146,5 @@ class _StopwatchHomePageState extends State<StopwatchHomePage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
   }
 }
